@@ -87,7 +87,7 @@ python main.py
 - HTTP process repo data
 - Background threading for network operations
 - Deterministic procedural generation
-- Enemy Image assets from https://game-icons.net/
+- Game Image assets from https://game-icons.net/
 
 ## Version History
 

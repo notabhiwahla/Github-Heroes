@@ -2,17 +2,36 @@
 Configuration constants and settings for Github Heroes.
 """
 import os
+import sys
 from pathlib import Path
 
 # Application info
 APP_NAME = "Github Heroes"
 APP_VERSION = "1.0.0"
 
+def get_resource_path(relative_path):
+    """
+    Get resource path that works for both development and PyInstaller.
+    When running from PyInstaller, sys._MEIPASS contains the path to the temp folder.
+    """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = Path(sys._MEIPASS)
+    except AttributeError:
+        # Running in development mode
+        base_path = Path(__file__).parent.parent
+    return base_path / relative_path
+
 # Paths
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 ASSETS_DIR = BASE_DIR / "assets"
 LOGS_DIR = BASE_DIR / "logs"
+
+# Icon paths (works for both development and compiled)
+APP_ICON_ICO = get_resource_path("assets/appicons/GitHubRPG.ico")
+APP_ICON_PNG = get_resource_path("assets/appicons/GitHubRPG.png")
+APP_ICON_SVG = get_resource_path("assets/appicons/GithubRPG.svg")  # Note: lowercase 'h' in Github
 
 # Ensure directories exist
 DATA_DIR.mkdir(exist_ok=True)

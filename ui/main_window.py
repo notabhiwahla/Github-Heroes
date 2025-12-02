@@ -7,8 +7,8 @@ from PyQt6.QtWidgets import (
     QLabel, QLineEdit, QPushButton, QComboBox
 )
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QAction
-from core.config import DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT
+from PyQt6.QtGui import QAction, QIcon, QPixmap
+from core.config import DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, APP_ICON_ICO, APP_ICON_PNG, APP_VERSION
 from core.logging_utils import get_logger
 from data.database import get_db
 from data.repositories import PlayerRepository
@@ -114,6 +114,13 @@ class MainWindow(QMainWindow):
         """Initialize UI."""
         self.setWindowTitle("Github Heroes")
         self.setGeometry(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
+        
+        # Set window icon (prefer ICO on Windows, PNG otherwise)
+        import sys
+        if sys.platform == "win32" and APP_ICON_ICO.exists():
+            self.setWindowIcon(QIcon(str(APP_ICON_ICO)))
+        elif APP_ICON_PNG.exists():
+            self.setWindowIcon(QIcon(str(APP_ICON_PNG)))
         
         # Menu bar
         self.create_menu_bar()
@@ -533,12 +540,31 @@ class MainWindow(QMainWindow):
     
     def show_about(self):
         """Show about dialog."""
-        QMessageBox.about(
-            self,
-            "About Github Heroes",
-            "Github Heroes v1.0.0\n\n"
+        about_box = QMessageBox(self)
+        about_box.setWindowTitle("About Github Heroes")
+        about_box.setText(
+            f"Github Heroes v{APP_VERSION}\n\n"
             "An endless incremental rpg \"Github Repo\" game by non-npc"
         )
+        
+        # Set the application icon
+        import sys
+        icon_path = None
+        if sys.platform == "win32" and APP_ICON_ICO.exists():
+            icon_path = APP_ICON_ICO
+        elif APP_ICON_PNG.exists():
+            icon_path = APP_ICON_PNG
+        
+        if icon_path:
+            pixmap = QPixmap(str(icon_path))
+            # Scale the icon to a reasonable size for the dialog (e.g., 64x64 or 128x128)
+            scaled_pixmap = pixmap.scaled(128, 128, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            about_box.setIconPixmap(scaled_pixmap)
+        else:
+            # Fallback to information icon if app icon not found
+            about_box.setIcon(QMessageBox.Icon.Information)
+        
+        about_box.exec()
     
     def load_settings(self):
         """Load window settings."""

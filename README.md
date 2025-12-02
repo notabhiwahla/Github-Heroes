@@ -16,6 +16,7 @@ Github Heroes is a single-player incremental RPG/exploration game built with Pyt
 - **Quests**: Issues become regular quests, Pull Requests become boss battles
 - **Loot**: Items themed by repository language and features
 
+
 ## Features
 
 - Explore GitHub repositories as RPG dungeons
@@ -71,7 +72,17 @@ python main.py
 - HTTP process repo data
 - Background threading for network operations
 - Deterministic procedural generation
-- version 1.0.0
+
+## Version History
+
+- version 1.0.1: app icons
+- version 1.0.0: initial push
+
+## Contributors
+
+- **non-npc**: Initial concept and push
+- **imc-avishayr**: App icons (ICO, PNG, SVG formats)
+
 
 ## License
 

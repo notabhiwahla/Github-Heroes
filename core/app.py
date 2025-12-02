@@ -2,8 +2,9 @@
 Application initialization and main window setup.
 """
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui import QIcon
 from core.logging_utils import setup_logging
-from core.config import APP_NAME
+from core.config import APP_NAME, APP_ICON_ICO, APP_ICON_PNG
 from ui.main_window import MainWindow
 from core.logging_utils import get_logger
 
@@ -15,6 +16,16 @@ def create_app():
     """
     app = QApplication([])
     app.setApplicationName(APP_NAME)
+    
+    # Set application icon (prefer ICO on Windows, PNG otherwise)
+    import sys
+    if sys.platform == "win32" and APP_ICON_ICO.exists():
+        app.setWindowIcon(QIcon(str(APP_ICON_ICO)))
+    elif APP_ICON_PNG.exists():
+        app.setWindowIcon(QIcon(str(APP_ICON_PNG)))
+    else:
+        logger.warning("Application icon not found")
+    
     return app
 
 def run_app():

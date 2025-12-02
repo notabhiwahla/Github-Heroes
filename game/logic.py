@@ -173,6 +173,17 @@ def generate_loot(enemy: Enemy, loot_quality: int = 1) -> Optional[Item]:
     
     item_name = f"{item_name_parts[0]} {item_type}"
     
+    # Map item type to equipment type (lowercase)
+    equipment_type_map = {
+        "Sword": "weapon",
+        "Shield": "shield",
+        "Armor": "armor",
+        "Ring": "ring",
+        "Amulet": "amulet",
+        "Boots": "boots"
+    }
+    equipment_type = equipment_type_map.get(item_type, None)
+    
     # Generate stat bonuses
     stat_bonuses = {}
     bonus_points = loot_quality * 2
@@ -187,7 +198,8 @@ def generate_loot(enemy: Enemy, loot_quality: int = 1) -> Optional[Item]:
         name=item_name,
         rarity=rarity,
         stat_bonuses_json="",
-        description=f"A {rarity} item dropped by {enemy.name}"
+        description=f"A {rarity} item dropped by {enemy.name}",
+        equipment_type=equipment_type
     )
     item.set_stat_bonuses(stat_bonuses)
     

@@ -31,6 +31,8 @@ def generate_room_enemy(danger_level: int, world_id: int, base_enemy: Optional[E
     enemy = Enemy()
     enemy.world_id = world_id
     enemy.is_boss = False
+    # Assign random creature image (1-120)
+    enemy.creature_image_id = random.randint(1, 120)
     
     # Generate enemy stats based on danger level (1-10)
     # Danger level 1 = appropriate for level 1 player
@@ -82,6 +84,8 @@ def generate_enemy_from_readme(features: ReadmeFeatures, world_id: Optional[int]
     
     enemy = Enemy()
     enemy.world_id = world_id
+    # Assign random creature image (1-120) based on seed for determinism
+    enemy.creature_image_id = random.randint(1, 120)
     
     # Determine name from keyword hits
     keyword_hits = features.keyword_hits

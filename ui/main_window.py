@@ -64,6 +64,8 @@ class NewPlayerDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("New Player")
         self.setModal(True)
+        self.setMinimumWidth(600)
+        self.setMinimumHeight(500)
         
         layout = QVBoxLayout()
         
@@ -79,6 +81,12 @@ class NewPlayerDialog(QDialog):
         layout.addWidget(github_label)
         layout.addWidget(self.github_input)
         
+        # Player image selector
+        from ui.widgets.player_image_selector import PlayerImageSelector
+        self.image_selector = PlayerImageSelector()
+        self.image_selector.image_selected.connect(self.on_image_selected)
+        layout.addWidget(self.image_selector)
+        
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
@@ -87,12 +95,18 @@ class NewPlayerDialog(QDialog):
         layout.addWidget(buttons)
         
         self.setLayout(layout)
+        self.selected_image_id = None
+    
+    def on_image_selected(self, image_id: int):
+        """Handle image selection."""
+        self.selected_image_id = image_id
     
     def get_player_data(self):
         """Get player data from dialog."""
         return {
             "name": self.name_input.text().strip() or "Hero",
-            "github_handle": self.github_input.text().strip() or None
+            "github_handle": self.github_input.text().strip() or None,
+            "player_image_id": self.selected_image_id
         }
 
 class MainWindow(QMainWindow):
@@ -291,7 +305,8 @@ class MainWindow(QMainWindow):
             data = dialog.get_player_data()
             player = Player(
                 name=data["name"],
-                github_handle=data["github_handle"]
+                github_handle=data["github_handle"],
+                player_image_id=data.get("player_image_id")
             )
             player = PlayerRepository.create(player)
             

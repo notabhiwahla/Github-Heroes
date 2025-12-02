@@ -3,13 +3,15 @@ Player profile view showing stats, inventory, and progress.
 """
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar,
-    QTableWidget, QTableWidgetItem, QGroupBox, QHeaderView, QPushButton, QWidget
+    QTableWidget, QTableWidgetItem, QGroupBox, QHeaderView, QPushButton, QWidget, QTabWidget
 )
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap
 from data.repositories import ItemRepository, RepoWorldRepository, QuestRepository, PlayerRepository
 from game.state import get_game_state
 from game.logic import calculate_inventory_space, apply_item_stats
 from core.logging_utils import get_logger
+from core.config import get_resource_path
 
 logger = get_logger(__name__)
 
@@ -31,15 +33,33 @@ class PlayerView(QWidget):
         title.setStyleSheet("font-size: 18px; font-weight: bold;")
         layout.addWidget(title)
         
-        # Stats section
-        stats_group = QGroupBox("Stats")
-        stats_layout = QVBoxLayout()
+        # Create tab widget
+        self.tabs = QTabWidget()
+        
+        # Stats tab
+        stats_tab = QWidget()
+        stats_tab_layout = QHBoxLayout()
+        
+        # Left column: Stats content
+        stats_left_layout = QVBoxLayout()
         
         self.name_label = QLabel("Name: -")
         self.level_label = QLabel("Level: -")
         self.xp_label = QLabel("XP: -")
         self.xp_bar = QProgressBar()
         self.xp_bar.setMaximum(100)
+        # Set XP bar color to yellow
+        self.xp_bar.setStyleSheet("""
+            QProgressBar {
+                border: 1px solid #333;
+                border-radius: 3px;
+                text-align: center;
+            }
+            QProgressBar::chunk {
+                background-color: #FFC107;
+                border-radius: 2px;
+            }
+        """)
         
         self.hp_label = QLabel("HP: -")
         self.attack_label = QLabel("Attack: -")
@@ -47,32 +67,45 @@ class PlayerView(QWidget):
         self.speed_label = QLabel("Speed: -")
         self.luck_label = QLabel("Luck: -")
         
-        stats_layout.addWidget(self.name_label)
-        stats_layout.addWidget(self.level_label)
-        stats_layout.addWidget(self.xp_label)
-        stats_layout.addWidget(self.xp_bar)
-        stats_layout.addWidget(QLabel("---"))
-        stats_layout.addWidget(self.hp_label)
-        stats_layout.addWidget(self.attack_label)
-        stats_layout.addWidget(self.defense_label)
-        stats_layout.addWidget(self.speed_label)
-        stats_layout.addWidget(self.luck_label)
+        stats_left_layout.addWidget(self.name_label)
+        stats_left_layout.addWidget(self.level_label)
+        stats_left_layout.addWidget(self.xp_label)
+        stats_left_layout.addWidget(self.xp_bar)
+        stats_left_layout.addWidget(QLabel("---"))
+        stats_left_layout.addWidget(self.hp_label)
+        stats_left_layout.addWidget(self.attack_label)
+        stats_left_layout.addWidget(self.defense_label)
+        stats_left_layout.addWidget(self.speed_label)
+        stats_left_layout.addWidget(self.luck_label)
+        stats_left_layout.addStretch()
         
-        stats_group.setLayout(stats_layout)
-        layout.addWidget(stats_group)
+        # Right column: Player image
+        stats_right_layout = QVBoxLayout()
+        stats_right_layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         
-        # Inventory section
-        inventory_group = QGroupBox("Inventory")
-        inventory_layout = QVBoxLayout()
+        self.player_image = QLabel()
+        self.player_image.setFixedSize(96, 96)
+        self.player_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.player_image.setStyleSheet("background-color: transparent;")
+        stats_right_layout.addWidget(self.player_image)
+        stats_right_layout.addStretch()
+        
+        stats_tab_layout.addLayout(stats_left_layout, stretch=1)
+        stats_tab_layout.addLayout(stats_right_layout, stretch=0)
+        stats_tab.setLayout(stats_tab_layout)
+        
+        # Inventory tab
+        inventory_tab = QWidget()
+        inventory_tab_layout = QVBoxLayout()
         
         # Inventory space label
         self.inventory_space_label = QLabel("Inventory: 0/10")
-        inventory_layout.addWidget(self.inventory_space_label)
+        inventory_tab_layout.addWidget(self.inventory_space_label)
         
         # Recycler button
         recycler_btn = QPushButton("Open Recycler")
         recycler_btn.clicked.connect(self.open_recycler)
-        inventory_layout.addWidget(recycler_btn)
+        inventory_tab_layout.addWidget(recycler_btn)
         
         self.inventory_table = QTableWidget()
         self.inventory_table.setColumnCount(6)
@@ -93,23 +126,25 @@ class PlayerView(QWidget):
         # Allow last section to stretch
         header.setStretchLastSection(False)
         
-        inventory_layout.addWidget(self.inventory_table)
+        inventory_tab_layout.addWidget(self.inventory_table)
+        inventory_tab.setLayout(inventory_tab_layout)
         
-        inventory_group.setLayout(inventory_layout)
-        layout.addWidget(inventory_group)
-        
-        # Achievements section
-        achievements_group = QGroupBox("Achievements")
-        achievements_layout = QVBoxLayout()
+        # Achievements tab
+        achievements_tab = QWidget()
+        achievements_tab_layout = QVBoxLayout()
         
         self.achievements_label = QLabel("No achievements yet")
         self.achievements_label.setWordWrap(True)
-        achievements_layout.addWidget(self.achievements_label)
+        achievements_tab_layout.addWidget(self.achievements_label)
+        achievements_tab_layout.addStretch()
+        achievements_tab.setLayout(achievements_tab_layout)
         
-        achievements_group.setLayout(achievements_layout)
-        layout.addWidget(achievements_group)
+        # Add tabs
+        self.tabs.addTab(stats_tab, "Stats")
+        self.tabs.addTab(inventory_tab, "Inventory")
+        self.tabs.addTab(achievements_tab, "Achievements")
         
-        layout.addStretch()
+        layout.addWidget(self.tabs)
         self.setLayout(layout)
     
     def refresh(self):
@@ -119,6 +154,7 @@ class PlayerView(QWidget):
         
         if not player:
             self.name_label.setText("Name: No player selected")
+            self.load_player_image(None)
             return
         
         # Update stats
@@ -127,6 +163,9 @@ class PlayerView(QWidget):
         self.xp_label.setText(f"XP: {player.xp} / {player.level * 100}")
         self.xp_bar.setMaximum(player.level * 100)
         self.xp_bar.setValue(player.xp)
+        
+        # Load player image
+        self.load_player_image(player)
         
         # Calculate stats with equipped items
         base_hp = player.hp
@@ -216,6 +255,25 @@ class PlayerView(QWidget):
         achievements.append(f"Quests Completed: {completed_quests}")
         
         self.achievements_label.setText("\n".join(achievements))
+    
+    def load_player_image(self, player):
+        """Load and display the player character image."""
+        if player and player.player_image_id:
+            # Format image ID as 001, 002, etc.
+            image_id_str = f"{player.player_image_id:03d}"
+            image_path = get_resource_path(f"assets/player/{image_id_str}.png")
+            
+            if image_path.exists():
+                pixmap = QPixmap(str(image_path))
+                # Scale to 96x96 while maintaining aspect ratio
+                scaled_pixmap = pixmap.scaled(96, 96, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                self.player_image.setPixmap(scaled_pixmap)
+            else:
+                logger.warning(f"Player image not found: {image_path}")
+                self.player_image.clear()
+        else:
+            # Clear image if no player or no image ID
+            self.player_image.clear()
     
     def equip_item(self, item_id: int):
         """Equip an item."""

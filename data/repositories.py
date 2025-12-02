@@ -20,12 +20,12 @@ class PlayerRepository:
         db = get_db()
         now = datetime.now().isoformat()
         cursor = db.execute("""
-            INSERT INTO players (name, level, xp, hp, attack, defense, speed, luck, github_handle, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO players (name, level, xp, hp, attack, defense, speed, luck, github_handle, player_image_id, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             player.name, player.level, player.xp, player.hp,
             player.attack, player.defense, player.speed, player.luck,
-            player.github_handle, now, now
+            player.github_handle, player.player_image_id, now, now
         ))
         db.commit()
         player.id = cursor.lastrowid
@@ -41,10 +41,15 @@ class PlayerRepository:
         cursor = db.execute("SELECT * FROM players WHERE id = ?", (player_id,))
         row = cursor.fetchone()
         if row:
+            try:
+                player_image_id = row["player_image_id"]
+            except (KeyError, IndexError):
+                player_image_id = None
             return Player(
                 id=row["id"], name=row["name"], level=row["level"], xp=row["xp"],
                 hp=row["hp"], attack=row["attack"], defense=row["defense"],
                 speed=row["speed"], luck=row["luck"], github_handle=row["github_handle"],
+                player_image_id=player_image_id,
                 created_at=row["created_at"], updated_at=row["updated_at"]
             )
         return None
@@ -55,12 +60,12 @@ class PlayerRepository:
         db = get_db()
         player.updated_at = datetime.now().isoformat()
         db.execute("""
-            UPDATE players SET name=?, level=?, xp=?, hp=?, attack=?, defense=?, speed=?, luck=?, github_handle=?, updated_at=?
+            UPDATE players SET name=?, level=?, xp=?, hp=?, attack=?, defense=?, speed=?, luck=?, github_handle=?, player_image_id=?, updated_at=?
             WHERE id=?
         """, (
             player.name, player.level, player.xp, player.hp,
             player.attack, player.defense, player.speed, player.luck,
-            player.github_handle, player.updated_at, player.id
+            player.github_handle, player.player_image_id, player.updated_at, player.id
         ))
         db.commit()
         return player
@@ -70,15 +75,20 @@ class PlayerRepository:
         """Get all players."""
         db = get_db()
         cursor = db.execute("SELECT * FROM players ORDER BY created_at DESC")
-        return [
-            Player(
+        result = []
+        for row in cursor.fetchall():
+            try:
+                player_image_id = row["player_image_id"]
+            except (KeyError, IndexError):
+                player_image_id = None
+            result.append(Player(
                 id=row["id"], name=row["name"], level=row["level"], xp=row["xp"],
                 hp=row["hp"], attack=row["attack"], defense=row["defense"],
                 speed=row["speed"], luck=row["luck"], github_handle=row["github_handle"],
+                player_image_id=player_image_id,
                 created_at=row["created_at"], updated_at=row["updated_at"]
-            )
-            for row in cursor.fetchall()
-        ]
+            ))
+        return result
 
 class RepoWorldRepository:
     """Repository for repo world operations."""
@@ -186,12 +196,12 @@ class EnemyRepository:
         """Create a new enemy."""
         db = get_db()
         cursor = db.execute("""
-            INSERT INTO enemies (world_id, name, level, hp, attack, defense, speed, tags_json, is_boss)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO enemies (world_id, name, level, hp, attack, defense, speed, tags_json, is_boss, creature_image_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             enemy.world_id, enemy.name, enemy.level, enemy.hp,
             enemy.attack, enemy.defense, enemy.speed, enemy.tags_json,
-            1 if enemy.is_boss else 0
+            1 if enemy.is_boss else 0, enemy.creature_image_id
         ))
         db.commit()
         enemy.id = cursor.lastrowid
@@ -204,11 +214,15 @@ class EnemyRepository:
         cursor = db.execute("SELECT * FROM enemies WHERE id = ?", (enemy_id,))
         row = cursor.fetchone()
         if row:
+            try:
+                creature_image_id = row["creature_image_id"]
+            except (KeyError, IndexError):
+                creature_image_id = None
             return Enemy(
                 id=row["id"], world_id=row["world_id"], name=row["name"],
                 level=row["level"], hp=row["hp"], attack=row["attack"],
                 defense=row["defense"], speed=row["speed"], tags_json=row["tags_json"],
-                is_boss=bool(row["is_boss"])
+                is_boss=bool(row["is_boss"]), creature_image_id=creature_image_id
             )
         return None
     
@@ -217,15 +231,19 @@ class EnemyRepository:
         """Get all enemies for a world."""
         db = get_db()
         cursor = db.execute("SELECT * FROM enemies WHERE world_id = ?", (world_id,))
-        return [
-            Enemy(
+        result = []
+        for row in cursor.fetchall():
+            try:
+                creature_image_id = row["creature_image_id"]
+            except (KeyError, IndexError):
+                creature_image_id = None
+            result.append(Enemy(
                 id=row["id"], world_id=row["world_id"], name=row["name"],
                 level=row["level"], hp=row["hp"], attack=row["attack"],
                 defense=row["defense"], speed=row["speed"], tags_json=row["tags_json"],
-                is_boss=bool(row["is_boss"])
-            )
-            for row in cursor.fetchall()
-        ]
+                is_boss=bool(row["is_boss"]), creature_image_id=creature_image_id
+            ))
+        return result
 
 class DungeonRoomRepository:
     """Repository for dungeon room operations."""
@@ -349,9 +367,9 @@ class ItemRepository:
         """Create a new item."""
         db = get_db()
         cursor = db.execute("""
-            INSERT INTO items (name, rarity, stat_bonuses_json, description)
-            VALUES (?, ?, ?, ?)
-        """, (item.name, item.rarity, item.stat_bonuses_json, item.description))
+            INSERT INTO items (name, rarity, stat_bonuses_json, description, equipment_type)
+            VALUES (?, ?, ?, ?, ?)
+        """, (item.name, item.rarity, item.stat_bonuses_json, item.description, item.equipment_type))
         db.commit()
         item.id = cursor.lastrowid
         return item
@@ -363,9 +381,15 @@ class ItemRepository:
         cursor = db.execute("SELECT * FROM items WHERE id = ?", (item_id,))
         row = cursor.fetchone()
         if row:
+            # Handle equipment_type - may not exist for old items
+            try:
+                equipment_type = row["equipment_type"]
+            except (KeyError, IndexError):
+                equipment_type = None
             return Item(
                 id=row["id"], name=row["name"], rarity=row["rarity"],
-                stat_bonuses_json=row["stat_bonuses_json"], description=row["description"]
+                stat_bonuses_json=row["stat_bonuses_json"], description=row["description"],
+                equipment_type=equipment_type
             )
         return None
     
@@ -390,22 +414,52 @@ class ItemRepository:
             JOIN player_inventory pi ON i.id = pi.item_id
             WHERE pi.player_id = ?
         """, (player_id,))
-        return [
-            (
+        result = []
+        for row in cursor.fetchall():
+            # Handle equipment_type - may not exist for old items
+            try:
+                equipment_type = row["equipment_type"]
+            except (KeyError, IndexError):
+                equipment_type = None
+            result.append((
                 Item(
                     id=row["id"], name=row["name"], rarity=row["rarity"],
-                    stat_bonuses_json=row["stat_bonuses_json"], description=row["description"]
+                    stat_bonuses_json=row["stat_bonuses_json"], description=row["description"],
+                    equipment_type=equipment_type
                 ),
                 row["quantity"],
                 bool(row["equipped"])
-            )
-            for row in cursor.fetchall()
-        ]
+            ))
+        return result
     
     @staticmethod
     def equip_item(player_id: int, item_id: int):
-        """Equip an item."""
+        """Equip an item. Unequips any existing item of the same equipment type."""
         db = get_db()
+        
+        # Get the item to find its equipment type
+        item = ItemRepository.get_by_id(item_id)
+        if not item or not item.equipment_type:
+            # If item has no equipment type, just equip it (backward compatibility)
+            db.execute("""
+                UPDATE player_inventory SET equipped = 1
+                WHERE player_id = ? AND item_id = ?
+            """, (player_id, item_id))
+            db.commit()
+            return
+        
+        # First, unequip any existing item of the same equipment type (excluding the item we're equipping)
+        db.execute("""
+            UPDATE player_inventory SET equipped = 0
+            WHERE player_id = ? AND item_id != ? AND item_id IN (
+                SELECT pi.item_id
+                FROM player_inventory pi
+                JOIN items i ON pi.item_id = i.id
+                WHERE pi.player_id = ? AND pi.equipped = 1 AND i.equipment_type = ?
+            )
+        """, (player_id, item_id, player_id, item.equipment_type))
+        
+        # Then equip the new item
         db.execute("""
             UPDATE player_inventory SET equipped = 1
             WHERE player_id = ? AND item_id = ?

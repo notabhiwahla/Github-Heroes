@@ -19,6 +19,7 @@ class Player:
     speed: int = 8
     luck: int = 5
     github_handle: Optional[str] = None
+    player_image_id: Optional[int] = None  # Image ID from 1-116
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
     
@@ -88,6 +89,7 @@ class Enemy:
     speed: int = 10
     tags_json: Optional[str] = None
     is_boss: bool = False
+    creature_image_id: Optional[int] = None  # Image ID from 1-120
     
     def get_tags(self) -> List[str]:
         """Get parsed tags."""
@@ -129,6 +131,7 @@ class Item:
     rarity: str = "common"  # "common", "uncommon", "rare", "epic", "legendary"
     stat_bonuses_json: str = "{}"
     description: Optional[str] = None
+    equipment_type: Optional[str] = None  # "weapon", "shield", "armor", "ring", "amulet", "boots"
     
     def get_stat_bonuses(self) -> Dict[str, int]:
         """Get parsed stat bonuses."""

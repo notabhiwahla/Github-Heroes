@@ -73,9 +73,11 @@ python main.py
 - HTTP process repo data
 - Background threading for network operations
 - Deterministic procedural generation
+- Enemy Image assets from https://game-icons.net/
 
 ## Version History
 
+- version 1.0.2: combat interface update, enemy graphics, inventory changes, profile changes
 - version 1.0.1: app icons
 - version 1.0.0: initial push
 
@@ -84,6 +86,9 @@ python main.py
 - **non-npc**: Initial concept and push
 - **imc-avishayr**: App icons (ICO, PNG, SVG formats)
 
+## NOTES
+
+- updates may break existing save games and may require starting fresh
 
 ## License
 

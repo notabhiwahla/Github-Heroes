@@ -156,6 +156,27 @@ class Database:
         except sqlite3.OperationalError:
             pass  # Column already exists
         
+        # Add equipment_type column to items table if it doesn't exist (migration)
+        try:
+            cursor.execute("ALTER TABLE items ADD COLUMN equipment_type TEXT")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+        
+        # Add creature_image_id column to enemies table if it doesn't exist (migration)
+        try:
+            cursor.execute("ALTER TABLE enemies ADD COLUMN creature_image_id INTEGER")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+        
+        # Add player_image_id column to players table if it doesn't exist (migration)
+        try:
+            cursor.execute("ALTER TABLE players ADD COLUMN player_image_id INTEGER")
+            self.conn.commit()
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+        
         # Create indices
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_repo_worlds_full_name ON repo_worlds(full_name)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_enemies_world_id ON enemies(world_id)")

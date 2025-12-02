@@ -117,5 +117,5 @@ When submitting a PR, please make sure your code follows the existing style and 
 
 ## License
 
-This project is provided as-is for educational and entertainment purposes.
+This project is provided under the MIT license.
 

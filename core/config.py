@@ -7,7 +7,7 @@ from pathlib import Path
 
 # Application info
 APP_NAME = "Github Heroes"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.3"
 
 def get_resource_path(relative_path):
     """

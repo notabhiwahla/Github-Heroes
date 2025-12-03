@@ -4,23 +4,23 @@ Procedural generation of game content from GitHub data.
 import random
 import json
 from typing import Optional, List
-from github.scraper import GitHubScraper
-from github.parsers import (
+from github_heroes.github.scraper import GitHubScraper
+from github_heroes.github.parsers import (
     parse_repo_metadata, parse_tree, parse_issues, parse_pulls, parse_commits
 )
-from github.analyzers import (
+from github_heroes.github.analyzers import (
     compute_readme_features, compute_structure_features,
     compute_activity_features, compute_issue_difficulty, compute_pr_boss_level
 )
-from data.models import (
+from github_heroes.data.models import (
     RepoWorld, Enemy, DungeonRoom, Quest, ReadmeFeatures
 )
-from data.repositories import (
+from github_heroes.data.repositories import (
     RepoWorldRepository, EnemyRepository, DungeonRoomRepository, QuestRepository
 )
-from data.database import get_db
-from core.logging_utils import get_logger
-from core.config import ENEMY_PREFIXES, ENEMY_SUFFIXES
+from github_heroes.data.database import get_db
+from github_heroes.core.logging_utils import get_logger
+from github_heroes.core.config import ENEMY_PREFIXES, ENEMY_SUFFIXES
 
 logger = get_logger(__name__)
 

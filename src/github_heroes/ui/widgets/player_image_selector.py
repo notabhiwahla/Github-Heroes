@@ -6,8 +6,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QPixmap, QMouseEvent
-from core.config import get_resource_path
-from core.logging_utils import get_logger
+from github_heroes.core.config import get_resource_path
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

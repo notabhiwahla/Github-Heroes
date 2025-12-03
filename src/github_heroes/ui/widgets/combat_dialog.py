@@ -7,14 +7,14 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QTimer
 from PyQt6.QtGui import QPainter, QColor, QPixmap
-from data.models import Player, Enemy
-from data.repositories import PlayerRepository
-from game.logic import combat_turn, handle_victory, handle_defeat
-from game.state import get_game_state
-from data.repositories import PlayerRepository, DungeonRoomRepository
-from data.database import get_db
-from core.logging_utils import get_logger
-from core.config import get_resource_path
+from github_heroes.data.models import Player, Enemy
+from github_heroes.data.repositories import PlayerRepository
+from github_heroes.game.logic import combat_turn, handle_victory, handle_defeat
+from github_heroes.game.state import get_game_state
+from github_heroes.data.repositories import PlayerRepository, DungeonRoomRepository
+from github_heroes.data.database import get_db
+from github_heroes.core.logging_utils import get_logger
+from github_heroes.core.config import get_resource_path
 
 logger = get_logger(__name__)
 
@@ -50,7 +50,7 @@ class CombatDialog(QDialog):
         self.starting_hp = player.hp
         
         # Calculate equipped item bonuses
-        from data.repositories import ItemRepository
+        from github_heroes.data.repositories import ItemRepository
         self.equipped_bonuses = {"hp": 0, "attack": 0, "defense": 0, "speed": 0, "luck": 0}
         inventory = ItemRepository.get_player_inventory(player.id)
         for item, quantity, equipped in inventory:
@@ -326,7 +326,7 @@ class CombatDialog(QDialog):
                 
                 # Track perfect victory
                 if self.damage_taken == 0:
-                    from data.repositories import PlayerStatsRepository
+                    from github_heroes.data.repositories import PlayerStatsRepository
                     PlayerStatsRepository.increment_stat(self.player.id, "perfect_victories", 1)
                 
                 loot, xp, leveled_up, achievement_context = handle_victory(
@@ -334,10 +334,10 @@ class CombatDialog(QDialog):
                 )
                 
                 # Check achievements
-                from game.achievements import check_achievements
+                from github_heroes.game.achievements import check_achievements
                 newly_unlocked = check_achievements(self.player, achievement_context)
                 if newly_unlocked:
-                    from game.achievements import ACHIEVEMENTS
+                    from github_heroes.game.achievements import ACHIEVEMENTS
                     achievement_names = [ACHIEVEMENTS[ach_id]["name"] for ach_id in newly_unlocked if ach_id in ACHIEVEMENTS]
                     if achievement_names:
                         ach_msg = "🏆 Achievement Unlocked!\n\n" + "\n".join(f"• {name}" for name in achievement_names)
@@ -350,8 +350,8 @@ class CombatDialog(QDialog):
                     result_msg += f"\nYou obtained: {loot.name} ({loot.rarity})"
                 else:
                     # Check if inventory was full
-                    from data.repositories import ItemRepository
-                    from game.logic import calculate_inventory_space
+                    from github_heroes.data.repositories import ItemRepository
+                    from github_heroes.game.logic import calculate_inventory_space
                     inventory_count = ItemRepository.get_inventory_count(self.player.id)
                     max_inventory = calculate_inventory_space(self.player.level)
                     if inventory_count >= max_inventory:

@@ -3,11 +3,11 @@ GitHub processor for fetching repository data via HTTP.
 """
 import requests
 from typing import Optional
-from core.config import (
+from github_heroes.core.config import (
     GITHUB_RAW_BASE, GITHUB_BASE, GITHUB_SEARCH_BASE,
     REQUEST_TIMEOUT, REQUEST_HEADERS, DEFAULT_BRANCHES
 )
-from core.logging_utils import get_logger
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -144,7 +144,7 @@ class GitHubScraper:
         Detect default branch by trying main, then master, or use override from settings.
         """
         # Check for branch override in settings
-        from data.database import get_db
+        from github_heroes.data.database import get_db
         db = get_db()
         override_branch = db.get_setting("default_branch", "")
         if override_branch:

@@ -6,8 +6,8 @@ from PyQt6.QtWidgets import (
     QListWidget, QListWidgetItem, QMessageBox, QGroupBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
-from data.repositories import RepoWorldRepository, EnemyRepository, QuestRepository, DungeonRoomRepository
-from core.logging_utils import get_logger
+from github_heroes.data.repositories import RepoWorldRepository, EnemyRepository, QuestRepository, DungeonRoomRepository
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

@@ -3,10 +3,10 @@ Application initialization and main window setup.
 """
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
-from core.logging_utils import setup_logging
-from core.config import APP_NAME, APP_ICON_ICO, APP_ICON_PNG
-from ui.main_window import MainWindow
-from core.logging_utils import get_logger
+from github_heroes.core.logging_utils import setup_logging
+from github_heroes.core.config import APP_NAME, APP_ICON_ICO, APP_ICON_PNG
+from github_heroes.ui.main_window import MainWindow
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

@@ -3,9 +3,9 @@ Game rules, combat system, loot generation, XP, and leveling.
 """
 import random
 from typing import Tuple, Optional, Dict, List
-from data.models import Player, Enemy, Item
-from data.repositories import PlayerRepository, ItemRepository, PlayerStatsRepository
-from core.logging_utils import get_logger
+from github_heroes.data.models import Player, Enemy, Item
+from github_heroes.data.repositories import PlayerRepository, ItemRepository, PlayerStatsRepository
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

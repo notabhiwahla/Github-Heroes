@@ -4,12 +4,12 @@ Tracks and unlocks achievements based on player actions.
 """
 from typing import List, Dict, Optional, Callable
 from datetime import datetime
-from data.models import Player, Achievement
-from data.repositories import (
+from github_heroes.data.models import Player, Achievement
+from github_heroes.data.repositories import (
     AchievementRepository, PlayerStatsRepository, RepoWorldRepository,
     QuestRepository, DungeonRoomRepository, ItemRepository, EnemyRepository
 )
-from core.logging_utils import get_logger
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

@@ -7,11 +7,11 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
-from data.repositories import ItemRepository, RepoWorldRepository, QuestRepository, PlayerRepository
-from game.state import get_game_state
-from game.logic import calculate_inventory_space, apply_item_stats
-from core.logging_utils import get_logger
-from core.config import get_resource_path
+from github_heroes.data.repositories import ItemRepository, RepoWorldRepository, QuestRepository, PlayerRepository
+from github_heroes.game.state import get_game_state
+from github_heroes.game.logic import calculate_inventory_space, apply_item_stats
+from github_heroes.core.logging_utils import get_logger
+from github_heroes.core.config import get_resource_path
 
 logger = get_logger(__name__)
 
@@ -182,10 +182,10 @@ class PlayerView(QWidget):
     def refresh(self):
         """Refresh player data."""
         # Check achievements periodically
-        from game.state import get_game_state
+        from github_heroes.game.state import get_game_state
         game_state = get_game_state()
         if game_state.current_player:
-            from game.achievements import check_achievements
+            from github_heroes.game.achievements import check_achievements
             check_achievements(game_state.current_player)
         game_state = get_game_state()
         player = game_state.current_player
@@ -316,8 +316,8 @@ class PlayerView(QWidget):
             self.inventory_table.setCellWidget(row, 5, action_widget)
         
         # Update achievements
-        from game.achievements import get_player_achievements, get_all_achievements_by_category, ACHIEVEMENTS
-        from data.repositories import AchievementRepository
+        from github_heroes.game.achievements import get_player_achievements, get_all_achievements_by_category, ACHIEVEMENTS
+        from github_heroes.data.repositories import AchievementRepository
         
         unlocked_achievements = get_player_achievements(player.id)
         all_achievements_by_category = get_all_achievements_by_category()
@@ -362,7 +362,7 @@ class PlayerView(QWidget):
             achievement_text.append(f"Progress to Level 100 Master: Level {player.level}/100")
         
         # Combat stats
-        from data.repositories import PlayerStatsRepository
+        from github_heroes.data.repositories import PlayerStatsRepository
         stats = PlayerStatsRepository.get_or_create(player.id)
         if "first_blood" not in unlocked_ids:
             achievement_text.append(f"Progress to First Blood: {stats['enemies_defeated']}/1 enemies defeated")
@@ -412,7 +412,7 @@ class PlayerView(QWidget):
     
     def open_recycler(self):
         """Open the recycler dialog."""
-        from ui.widgets.recycler_dialog import RecyclerDialog
+        from github_heroes.ui.widgets.recycler_dialog import RecyclerDialog
         dialog = RecyclerDialog(self)
         dialog.exec()
         # Refresh after closing recycler

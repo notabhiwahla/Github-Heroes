@@ -4,8 +4,8 @@ HTML parsers for GitHub pages.
 import re
 from typing import List, Optional
 from bs4 import BeautifulSoup
-from data.models import RepoMeta, TreeEntry, IssueData, PullRequestData, CommitData
-from core.logging_utils import get_logger
+from github_heroes.data.models import RepoMeta, TreeEntry, IssueData, PullRequestData, CommitData
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

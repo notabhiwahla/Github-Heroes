@@ -3,11 +3,11 @@ Data access layer for database operations.
 """
 from typing import List, Optional, Dict
 from datetime import datetime
-from data.database import get_db
-from data.models import (
+from github_heroes.data.database import get_db
+from github_heroes.data.models import (
     Player, RepoWorld, Enemy, DungeonRoom, Quest, Item, Achievement
 )
-from core.logging_utils import get_logger
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

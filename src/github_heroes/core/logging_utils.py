@@ -4,7 +4,7 @@ Logging utilities for Github Heroes.
 import logging
 import sys
 from pathlib import Path
-from core.config import LOGS_DIR
+from github_heroes.core.config import LOGS_DIR
 
 def setup_logging(log_level=logging.INFO):
     """

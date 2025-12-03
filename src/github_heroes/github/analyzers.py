@@ -5,9 +5,9 @@ import re
 import hashlib
 from collections import Counter
 from typing import Dict, List
-from data.models import ReadmeFeatures, TreeEntry, IssueData, PullRequestData, CommitData
-from core.config import KEYWORD_GROUPS, HEALTH_VIBRANT, HEALTH_STABLE, HEALTH_FRAIL
-from core.logging_utils import get_logger
+from github_heroes.data.models import ReadmeFeatures, TreeEntry, IssueData, PullRequestData, CommitData
+from github_heroes.core.config import KEYWORD_GROUPS, HEALTH_VIBRANT, HEALTH_STABLE, HEALTH_FRAIL
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

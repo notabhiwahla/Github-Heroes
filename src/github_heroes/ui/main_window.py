@@ -8,26 +8,26 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction, QIcon, QPixmap
-from core.config import DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, APP_ICON_ICO, APP_ICON_PNG, APP_VERSION
-from core.logging_utils import get_logger
-from data.database import get_db
-from data.repositories import PlayerRepository
-from data.models import Player
-from game.state import get_game_state
-from game.generators import build_repo_world
-from github.scraper import GitHubScraper
-from ui.widgets.status_bar import GameStatusBar
-from ui.widgets.search_panel import SearchPanel
-from ui.widgets.map_view import MapView
-from ui.widgets.quest_board import QuestBoardView
-from ui.widgets.dungeon_view import DungeonView
-from ui.widgets.player_view import PlayerView
-from ui.widgets.combat_dialog import CombatDialog
-from ui.widgets.progress_dialog import ScrapingProgressDialog
-from data.repositories import (
+from github_heroes.core.config import DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, APP_ICON_ICO, APP_ICON_PNG, APP_VERSION
+from github_heroes.core.logging_utils import get_logger
+from github_heroes.data.database import get_db
+from github_heroes.data.repositories import PlayerRepository
+from github_heroes.data.models import Player
+from github_heroes.game.state import get_game_state
+from github_heroes.game.generators import build_repo_world
+from github_heroes.github.scraper import GitHubScraper
+from github_heroes.ui.widgets.status_bar import GameStatusBar
+from github_heroes.ui.widgets.search_panel import SearchPanel
+from github_heroes.ui.widgets.map_view import MapView
+from github_heroes.ui.widgets.quest_board import QuestBoardView
+from github_heroes.ui.widgets.dungeon_view import DungeonView
+from github_heroes.ui.widgets.player_view import PlayerView
+from github_heroes.ui.widgets.combat_dialog import CombatDialog
+from github_heroes.ui.widgets.progress_dialog import ScrapingProgressDialog
+from github_heroes.data.repositories import (
     RepoWorldRepository, QuestRepository, EnemyRepository, DungeonRoomRepository
 )
-from game.logic import handle_victory
+from github_heroes.game.logic import handle_victory
 
 logger = get_logger(__name__)
 
@@ -77,14 +77,14 @@ class NewPlayerDialog(QDialog):
         
         class_label = QLabel("Class:")
         self.class_combo = QComboBox()
-        from core.config import PLAYER_CLASSES
+        from github_heroes.core.config import PLAYER_CLASSES
         self.class_combo.addItems(PLAYER_CLASSES)
         self.class_combo.setCurrentIndex(0)  # Default to first class
         layout.addWidget(class_label)
         layout.addWidget(self.class_combo)
         
         # Player image selector
-        from ui.widgets.player_image_selector import PlayerImageSelector
+        from github_heroes.ui.widgets.player_image_selector import PlayerImageSelector
         self.image_selector = PlayerImageSelector()
         self.image_selector.image_selected.connect(self.on_image_selected)
         layout.addWidget(self.image_selector)
@@ -105,7 +105,7 @@ class NewPlayerDialog(QDialog):
     
     def get_player_data(self):
         """Get player data from dialog."""
-        from core.config import PLAYER_CLASSES
+        from github_heroes.core.config import PLAYER_CLASSES
         selected_class = self.class_combo.currentText()
         return {
             "name": self.name_input.text().strip() or "Hero",
@@ -398,8 +398,8 @@ class MainWindow(QMainWindow):
             # Check achievements for repository addition
             game_state = get_game_state()
             if game_state.current_player:
-                from game.achievements import check_achievements
-                from game.achievements import ACHIEVEMENTS
+                from github_heroes.game.achievements import check_achievements
+                from github_heroes.game.achievements import ACHIEVEMENTS
                 context = {"repository_added": True}
                 newly_unlocked = check_achievements(game_state.current_player, context)
                 if newly_unlocked:
@@ -506,8 +506,8 @@ class MainWindow(QMainWindow):
     
     def on_room_selected(self, room_id: int):
         """Handle room selection."""
-        from data.repositories import DungeonRoomRepository
-        from game.generators import generate_room_enemy
+        from github_heroes.data.repositories import DungeonRoomRepository
+        from github_heroes.game.generators import generate_room_enemy
         room = DungeonRoomRepository.get_by_id(room_id)
         
         if not room:
@@ -521,7 +521,7 @@ class MainWindow(QMainWindow):
                 return
             
             # Restore player HP before combat
-            from game.logic import restore_player_hp
+            from github_heroes.game.logic import restore_player_hp
             restore_player_hp(game_state.current_player)
             
             # Generate room-specific enemy scaled to danger level
@@ -546,8 +546,8 @@ class MainWindow(QMainWindow):
                 QuestRepository.update(quest)
                 
                 # Track quest completion stats
-                from data.repositories import PlayerStatsRepository
-                from game.achievements import check_achievements
+                from github_heroes.data.repositories import PlayerStatsRepository
+                from github_heroes.game.achievements import check_achievements
                 game_state = get_game_state()
                 if game_state.current_player:
                     PlayerStatsRepository.increment_stat(game_state.current_player.id, "quests_completed", 1)
@@ -559,7 +559,7 @@ class MainWindow(QMainWindow):
                     # Check achievements
                     newly_unlocked = check_achievements(game_state.current_player)
                     if newly_unlocked:
-                        from game.achievements import ACHIEVEMENTS
+                        from github_heroes.game.achievements import ACHIEVEMENTS
                         achievement_names = [ACHIEVEMENTS[ach_id]["name"] for ach_id in newly_unlocked if ach_id in ACHIEVEMENTS]
                         if achievement_names:
                             ach_msg = "🏆 Achievement Unlocked!\n\n" + "\n".join(f"• {name}" for name in achievement_names)
@@ -574,8 +574,8 @@ class MainWindow(QMainWindow):
     def on_room_combat_ended(self, room_id: int, result: str, data: dict):
         """Handle combat end for room."""
         if result == "victory":
-            from data.repositories import DungeonRoomRepository, PlayerStatsRepository
-            from game.achievements import check_achievements
+            from github_heroes.data.repositories import DungeonRoomRepository, PlayerStatsRepository
+            from github_heroes.game.achievements import check_achievements
             game_state = get_game_state()
             room = DungeonRoomRepository.get_by_id(room_id)
             if room:
@@ -588,7 +588,7 @@ class MainWindow(QMainWindow):
                 if game_state.current_player:
                     newly_unlocked = check_achievements(game_state.current_player)
                     if newly_unlocked:
-                        from game.achievements import ACHIEVEMENTS
+                        from github_heroes.game.achievements import ACHIEVEMENTS
                         achievement_names = [ACHIEVEMENTS[ach_id]["name"] for ach_id in newly_unlocked if ach_id in ACHIEVEMENTS]
                         if achievement_names:
                             ach_msg = "🏆 Achievement Unlocked!\n\n" + "\n".join(f"• {name}" for name in achievement_names)
@@ -602,7 +602,7 @@ class MainWindow(QMainWindow):
     
     def show_settings(self):
         """Show settings dialog."""
-        from ui.widgets.settings_dialog import SettingsDialog
+        from github_heroes.ui.widgets.settings_dialog import SettingsDialog
         dialog = SettingsDialog(self)
         if dialog.exec():
             # Reload scraper with new token if changed

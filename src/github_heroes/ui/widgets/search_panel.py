@@ -7,9 +7,9 @@ from PyQt6.QtWidgets import (
     QLabel, QTextEdit, QListWidget, QListWidgetItem, QMessageBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
-from github.scraper import GitHubScraper
-from github.parsers import parse_repo_metadata
-from core.logging_utils import get_logger
+from github_heroes.github.scraper import GitHubScraper
+from github_heroes.github.parsers import parse_repo_metadata
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

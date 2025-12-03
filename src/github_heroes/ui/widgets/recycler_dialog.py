@@ -6,9 +6,9 @@ from PyQt6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QSpinBox, QMessageBox, QHeaderView, QWidget
 )
 from PyQt6.QtCore import Qt
-from data.repositories import ItemRepository
-from game.state import get_game_state
-from core.logging_utils import get_logger
+from github_heroes.data.repositories import ItemRepository
+from github_heroes.game.state import get_game_state
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -159,8 +159,8 @@ class RecyclerDialog(QDialog):
         if not game_state.current_player:
             return
         
-        from game.logic import award_xp
-        from data.repositories import PlayerRepository
+        from github_heroes.game.logic import award_xp
+        from github_heroes.data.repositories import PlayerRepository
         
         # XP values by rarity
         rarity_xp = {

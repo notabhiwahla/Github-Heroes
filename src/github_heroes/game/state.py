@@ -2,8 +2,8 @@
 Core in-memory game state.
 """
 from typing import Optional
-from data.models import Player, RepoWorld, Enemy, DungeonRoom
-from data.repositories import PlayerRepository, RepoWorldRepository, EnemyRepository, DungeonRoomRepository
+from github_heroes.data.models import Player, RepoWorld, Enemy, DungeonRoom
+from github_heroes.data.repositories import PlayerRepository, RepoWorldRepository, EnemyRepository, DungeonRoomRepository
 
 class GameState:
     """

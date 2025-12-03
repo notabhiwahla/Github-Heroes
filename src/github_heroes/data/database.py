@@ -6,8 +6,8 @@ import json
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from core.config import DB_PATH
-from core.logging_utils import get_logger
+from github_heroes.core.config import DB_PATH
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

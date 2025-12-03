@@ -6,8 +6,8 @@ from PyQt6.QtWidgets import (
     QCheckBox, QSpinBox, QGroupBox, QDialogButtonBox, QMessageBox
 )
 from PyQt6.QtCore import Qt
-from data.database import get_db
-from core.logging_utils import get_logger
+from github_heroes.data.database import get_db
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -132,7 +132,7 @@ class SettingsDialog(QDialog):
             self.sender().setText("Show")
     
     def load_settings(self):
-        """Load settings from database."""
+        """Load settings from github_heroes.database."""
         db = get_db()
         
         # GitHub token

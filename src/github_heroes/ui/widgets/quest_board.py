@@ -6,9 +6,9 @@ from PyQt6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QComboBox, QMessageBox, QHeaderView
 )
 from PyQt6.QtCore import Qt, pyqtSignal
-from data.repositories import RepoWorldRepository, QuestRepository, EnemyRepository
-from game.state import get_game_state
-from core.logging_utils import get_logger
+from github_heroes.data.repositories import RepoWorldRepository, QuestRepository, EnemyRepository
+from github_heroes.game.state import get_game_state
+from github_heroes.core.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

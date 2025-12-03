@@ -60,7 +60,7 @@ class ScrapingThread(QThread):
     def __init__(self, owner: str, repo: str, scraper: GitHubScraper):
         super().__init__()
         self.owner = owner
-        self.repo = repo
+        self.repo = repo.removesuffix(".git")
         self.scraper = scraper
 
     def run(self):

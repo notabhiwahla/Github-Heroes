@@ -56,6 +56,12 @@ python main.py
 5. **Level Up**: Gain XP and level up to become stronger
 6. **Complete Quests**: Take on issues and PRs as quests and boss battles
 
+
+## Strategy
+
+- Gain some levels with small repos before attempting large repos and their dangerous dungeons.
+
+
 ## Game Mechanics
 
 - **Enemies**: Generated deterministically from README content

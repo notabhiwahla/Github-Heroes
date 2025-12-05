@@ -53,7 +53,8 @@ pip install .
 ```
 
 3. Web download
-```unpack zip to a folder
+```
+unpack zip to a folder
 in that folder run command prompt and type:
 pip install requirements.txt
 ```

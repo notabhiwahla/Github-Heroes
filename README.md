@@ -52,6 +52,13 @@ python3 -m venv .venv
 pip install .
 ```
 
+3. Web download
+```
+unpack zip to a folder
+in that folder run command prompt and type:
+pip install requirements.txt
+```
+
 ## Running
 
 1. With uv
@@ -62,6 +69,11 @@ uv run github-heroes
 2. With classic venv
 ```bash
 github-heroes
+```
+
+3. Web download
+```cli
+python main.py
 ```
 
 ## How to Play

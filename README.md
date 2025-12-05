@@ -1,4 +1,4 @@
-![Github Heroes Icon](assets/appicons/GitHubRPG.png)
+![Github Heroes Icon](src/github_heroes/assets/appicons/GitHubRPG.png)
 # Github Heroes
 
 An RPG "Github Repo" game that turns GitHub repositories into dungeons, enemies, quests, and loot.
@@ -33,18 +33,35 @@ Github Heroes is a single-player incremental RPG/exploration game built with Pyt
 - requests
 - beautifulsoup4
 - lxml
+- click
+
+On linux, it may be needed to install xcb-cursor0 or libxcb-cursor0 package, as well as fonts to handle Unicode characters.
+For instance on Debian the package fonts-recommanded will install font that will handle such characters.
 
 ## Installation
 
-1. Install dependencies:
+1. With uv
 ```bash
-pip install -r requirements.txt
+uv pip install .
+```
+
+2. With classic venv
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install .
 ```
 
 ## Running
 
+1. With uv
 ```bash
-python main.py
+uv run github-heroes
+```
+
+2. With classic venv
+```bash
+github-heroes
 ```
 
 ## How to Play

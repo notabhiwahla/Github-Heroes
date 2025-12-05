@@ -33,32 +33,18 @@ Github Heroes is a single-player incremental RPG/exploration game built with Pyt
 - requests
 - beautifulsoup4
 - lxml
-- click
 
 ## Installation
 
-1. With uv
+1. Install dependencies:
 ```bash
-uv pip install .
-```
-
-2. With classic venv
-```bash
-python3 -m venv .venv
-. .venv/bin/activate
-pip install .
+pip install -r requirements.txt
 ```
 
 ## Running
 
-1. With uv
 ```bash
-uv run github-heroes
-```
-
-2. With classic venv
-```bash
-github-heroes
+python main.py
 ```
 
 ## How to Play

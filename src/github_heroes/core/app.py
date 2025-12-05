@@ -34,7 +34,7 @@ def create_app():
     return app
 
 
-@click.command(context_settings=dict(help_option_names=["-h", "--help"]))
+@click.command(name="github-heroes", context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option(
     "-l",
     "--log",
